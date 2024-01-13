@@ -1,4 +1,4 @@
-# docker를 활용한 nest, nest 데이터 통신
+# docker를 활용한 next, nest 데이터 통신
 
 ## 실행방법
 ``` bash
