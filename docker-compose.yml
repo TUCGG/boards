@@ -1,0 +1,61 @@
+version: "3.3"
+
+services:
+  # NextJS 13 서비스
+  next-app:
+    container_name: next-container
+    build:
+      context: ./next-app
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file: ./.env
+    ports:
+      - "${NEXT_LOCAL_PORT}:${NEXT_DOCKER_PORT}"
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./next-app:/app
+      - /app/node_modules
+      - /app/.next
+      # - ./.env:/app/.env
+    networks:
+      - default
+
+  # NestJS 서비스
+  nest-app:
+    container_name: nest-container
+    build: ./nest-app
+    restart: unless-stopped
+    env_file: ./.env
+    ports:
+      - "${NEST_LOCAL_PORT}:${NEST_DOCKER_PORT}"
+    # environment:
+    #   - DB_HOST=${MYSQLDB_HOST}
+    #   - DB_USER=${MYSQLDB_USER}
+    #   - DB_PASSWORD=${MYSQLDB_PASSWORD}
+    #   - DB_DATABASE=${MYSQLDB_DATABASE}
+    #   - DB_PORT=${MYSQLDB_DOCKER_PORT}
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./nest-app:/app
+      - /app/node_modules
+      # - ./.env:/app/.env
+    networks:
+      - default
+
+  # MySQL 8.0 서비스
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-container
+    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    restart: unless-stopped
+    env_file: ./.env
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQLDB_PASSWORD}
+    ports:
+      - "${MYSQLDB_LOCAL_PORT}:${MYSQLDB_DOCKER_PORT}"
+    # volumes:
+    #   - mysql-volume:/var/lib/mysql:rw
+    #   - ./mysql/my.cnf:/etc/mysql/my.cnf
+    #   - ./mysql:/docker-entrypoint-initdb.d
