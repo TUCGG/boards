@@ -1,9 +1,6 @@
-import { PublicRelationListInterFace } from "../../types/publicRelation";
 import httpBoard from "../lib/axios/httpBoard";
 
 const API_BASE_URL = `${process.env.NEXT_PUBLIC_API_HOST}`;
-// const API_BASE_URL = `http://www.bubblecon.test:3001`;
-//  || "http://localhost:3001";
 
 export const getAllBoard = async () => {
   try {
@@ -19,7 +16,7 @@ export const getAllBoardsByType = async (type: string) => {
   // type은 report, video, story 스트링으로 넘어옴
   try {
     const response = await httpBoard.get(
-      `${API_BASE_URL}/boards/byType/${type}`,
+      `${API_BASE_URL}/boards/byType/${type}`
     );
 
     return response;
@@ -51,7 +48,7 @@ export const getNearBoard = async (id: number) => {
   }
 };
 
-export const createBoard = async (boardData) => {
+export const createBoard = async (boardData: any) => {
   try {
     const response = await httpBoard.post(`${API_BASE_URL}/boards`, boardData);
     const { data } = response;
@@ -73,11 +70,11 @@ export const deleteBoard = async (id: number) => {
   }
 };
 
-export const editBoard = async (boardData) => {
+export const editBoard = async (boardData: any) => {
   try {
     const response = await httpBoard.patch(
       `${API_BASE_URL}/boards/${boardData.id}`,
-      boardData,
+      boardData
     );
     const { data } = response;
 
@@ -100,33 +97,3 @@ export const editBoard = async (boardData) => {
 //   isShow: true,
 //   thumb: 'https://bubblecon.s3.amazonaws.com/5.png'
 // };
-
-export const searchBoards = async (
-  type: string,
-  contents: string,
-  activeTab: string,
-  isShow: string = "true",
-  startDate: string,
-  endDate: string,
-  start?: number,
-  limit?: number,
-): Promise<{ total_count: number; items: PublicRelationListInterFace[] }> => {
-  try {
-    // type, contents 값이 잘 넘어옴
-    const response = await httpBoard.get(`${API_BASE_URL}/boards/search`, {
-      params: {
-        type: type,
-        contents: contents,
-        activeTab: activeTab,
-        isShow: isShow,
-        startDate: startDate,
-        endDate: endDate,
-        start: start,
-        limit: limit,
-      },
-    });
-    return response.data;
-  } catch (error) {
-    console.error("게시판 검색 중 오류 : ", error);
-  }
-};
